@@ -1,7 +1,8 @@
-import * as pdfjsLib from "./lib/pdf.min.mjs";
+// PDFを読むライブラリ(pdf.js)は、リポジトリに入れず、CDN(jsDelivr)から読み込む。バージョンは固定
+import * as pdfjsLib from "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.2.108/legacy/build/pdf.min.mjs";
 import { extractRows, parseRows } from "./pdfscript.js";
-const abs = p => new URL(p, location.href).href;
-pdfjsLib.GlobalWorkerOptions.workerSrc = abs("./lib/pdf.worker.min.mjs");
+const PDFJS_CDN = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.2.108"; // 上のimportと同じバージョンにすること
+pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_CDN + "/legacy/build/pdf.worker.min.mjs";
 const $ = id => document.getElementById(id);
 const S = { pdf: null, rows: [], items: [], mine: new Set(), names: new Map(), i: -1, page: 1, reveal: false, cache: {}, tok: 0, hide: false };
 
@@ -10,7 +11,7 @@ $("file").onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
   $("status").textContent = "読み込み中…";
   try {
-    S.pdf = await pdfjsLib.getDocument({ data: await f.arrayBuffer(), cMapUrl: abs("./lib/cmaps/"), cMapPacked: true, standardFontDataUrl: abs("./lib/standard_fonts/") }).promise;
+    S.pdf = await pdfjsLib.getDocument({ data: await f.arrayBuffer(), cMapUrl: PDFJS_CDN + "/cmaps/", cMapPacked: true, standardFontDataUrl: PDFJS_CDN + "/standard_fonts/" }).promise;
     S.cache = {}; S.rows = []; S.mine.clear(); S.names = new Map();
     for (let p = 1; p <= S.pdf.numPages; p++) S.rows.push(...await extractRows(await S.pdf.getPage(p), p, pdfjsLib.Util));
     if (!S.rows.length) { $("status").textContent = "テキストを抽出できませんでした（スキャン画像のPDFは未対応）"; return }
