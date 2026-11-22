@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>せりふおぼえ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header>
+    <h1>せりふおぼえ</h1>
+    <div class="button-container"
+      style="background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 14px;cursor:pointer">
+      <label class="button" for="popupFlag1">このサイトについて</label>
+    </div>
+    <input type="checkbox" class="popup-flag" id="popupFlag1">
+    <label class="popup-background" for="popupFlag1"></label>
+    <div class="popup">
+      <label class="close-button" for="popupFlag1">×</label>
+      <div class="content">
+        <h3>このサイトについて</h3>
+        <p>PDFの台本を読み込んで、役のセリフの暗記を支援するWebアプリです。</p>
+        <p>PDFの読み取りに生成AIを使用せず、データが外部に送信されることがないため安心してご利用いただけます。</p>
+        <p>また、縦書きの文字化け修正にも対応しています。</p>
+      </div>
+    </div>
+    <br>
+    <label>
+      <input type="file" id="file" accept="application/pdf" hidden><button id="pick"
+        class="pri">PDF台本を読み込む</button></label>
+    <div class="header-row">
+      <div id="status" class="muted">PDFを選択してください</div>
+    </div>
+  </header>
+
+  <section id="setup" hidden>
+    <div><b>覚える役を選択</b>（複数可）<span class="muted">　台本から検出した役名候補：</span></div>
+    <div id="chips"></div>
+    <div style="margin-top:6px">
+      <input id="addName" placeholder="候補にない役名を追加"
+        style="padding:5px 8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg)">
+      <button id="addBtn">追加</button>
+      <button id="fixBtn">縦書きバグ修正：OFF</button>
+      <button id="start" class="pri" disabled>② 練習スタート</button>
+    </div>
+    <label class="muted" style="display:block;margin-top:8px"><input type="checkbox" id="parenDir"> （
+      ）で始まる行をト書きとして扱う</label>
+    <label class="muted" style="display:block;margin-top:4px"><input type="checkbox" id="softBreak" checked>
+      行末が短い行（Wordのshift+Enter改行など）の次の行を、新しい項目として区切る</label>
+    <details style="margin-top:6px">
+      <summary class="muted">読み取り結果を確認（項目の区切りと、PDFから読み取った行）</summary>
+      <pre id="diag"
+        style="max-height:240px;overflow:auto;font-size:12px;white-space:pre-wrap;margin:6px 0;padding:8px;background:var(--bg);border:1px solid var(--bd);border-radius:8px"></pre>
+    </details>
+    <div style="margin-top:8px">
+      <div id="odd" class="muted"></div>
+      <details>
+        <summary class="muted">立て書きの文字化け変換表を編集（1行1つ　変換前⇒変換後　／　末尾に@カ を付けると、前の文字がカタカナのときだけ使う）</summary>
+        <textarea id="fixTbl" rows="8"
+          style="width:100%;max-width:320px;padding:6px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);font-family:monospace"></textarea>
+      </details>
+    </div>
+  </section>
+
+  <main>
+    <div id="pv">
+      <div id="wrap"><canvas id="cv"></canvas>
+        <div id="ov"></div>
+      </div>
+    </div>
+    <div id="pn">
+      <div id="ctl">
+        <div class="pg-ctl muted">
+          <button id="pgPrev" aria-label="前のページ" title="前のページ">◀</button>
+          <label>ページ <input id="pg" type="number" min="1" value="1"> <span id="pgmax"></span></label>
+          <button id="pgNext" aria-label="次のページ" title="次のページ">▶</button>
+        </div>
+        <label class="muted"><input type="checkbox" id="hideMode"> 暗記モード（クリック / ↓ / Space で表示）</label>
+      </div>
+      <div class="box" id="top">
+        <h2>ト書き・相手のセリフ</h2>
+        <div id="topT" class="muted">PDFを読み込んでください</div>
+      </div>
+      <div class="box" id="bot">
+        <h2>あなたのセリフ</h2>
+        <div id="botT" class="muted">—</div>
+      </div>
+      <div id="nav">
+        <button id="prev">← 戻る</button>
+        <!-- <span id="prog" class="muted"></span> -->
+        <button id="next" class="pri">進む →</button>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="script.js"></script>
+</body>
+
+</html>
